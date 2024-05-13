@@ -12,32 +12,26 @@ struct ContentView: View {
     @State private var lastOffset = CGSize.zero
     
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                Color.black
-                Color.white
-                Color.black
-                Color.white
-            }
-            VStack(spacing: 0) {
-                Color.white
-                Color.pink
-                Color.yellow
-                Color.black
-            }
-            .overlay {
-                dynamicRectangle
-                    .blendMode(.destinationOut)
-            }
-            .compositingGroup()
+        VStack(spacing: 0) {
+            Color.white
+            Color.pink
+            Color.yellow
+            Color.black
+        }
+        .overlay {
+            dynamicRectangle.foregroundColor(.white)
+                .blendMode(.difference)
+                .overlay(dynamicRectangle.blendMode(.hue))
+                .overlay(dynamicRectangle.foregroundColor(.white).blendMode(.overlay))
+                .overlay(dynamicRectangle.foregroundColor(.black).blendMode(.overlay))
         }
         .ignoresSafeArea()
     }
     
+    
     var dynamicRectangle: some View {
         RoundedRectangle(cornerRadius: 25.0)
             .frame(width: 100, height: 100)
-            .foregroundColor(.white)
             .offset(offset)
             .gesture(
                 DragGesture()
@@ -48,12 +42,11 @@ struct ContentView: View {
                         )
                     }
                     .onEnded { gesture in
-                        self.lastOffset = self.offset // Сохраняем последнее положение
+                        self.lastOffset = self.offset
                     }
             )
     }
 }
-
 
 #Preview {
     ContentView()
